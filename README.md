@@ -77,13 +77,27 @@ df.columns
 
 ```
 from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_classif
+from sklearn.impute import SimpleImputer
+
+# Select features
 X = df[['PassengerId','Pclass','Age','SibSp','Parch','Fare']]
 y = df['Survived']
-from sklearn.feature_selection import f_classif
+
+# Fill missing values in Age column
+imputer = SimpleImputer(strategy='mean')
+X = imputer.fit_transform(X)
+
+# Feature selection
 selector = SelectKBest(score_func=f_classif, k=4)
-X_new = selector.fit_transform(X,y)
+X_new = selector.fit_transform(X, y)
+
+# Get selected feature names
 selected_feature_indices = selector.get_support(indices=True)
-selected_features =X.columns[selected_feature_indices]
+
+feature_names = ['PassengerId','Pclass','Age','SibSp','Parch','Fare']
+selected_features = [feature_names[i] for i in selected_feature_indices]
+
 print("Selected Features:")
 print(selected_features)
 ```
